@@ -182,7 +182,7 @@ def user_stats(df, city):
         print("  {}: {}".format(user.index[index], user_count))
 
     print()
-
+    # washington cvs file does not contain any genders - need to account
     # TO DO: Display counts of gender
     if city == "washington":
         print("I'm sorry gender information is not available for Washington")
