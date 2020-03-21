@@ -20,3 +20,6 @@ washington.cvs
 
 ### Credits
 No credits at this time
+
+### adding lines for Additional Changes to Documentation
+This will simulate a real world situation making changes to the documentation branch.  To simulate this follow the tasks below.
