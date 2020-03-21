@@ -1,15 +1,22 @@
-### Date created
-Include the date you created this project and README file.
+### Date Created
+3/21/20
 
 ### Project Title
-Replace the Project Title
+Github Project:
 
 ### Description
-Describe what your project is about and what it does
+Git Commands Documentation Template
+Programming for Data Science Nanodegree Program
+
 
 ### Files used
-Include the files used
+grasso_Bikeshare.py
+readme
+Gitignore Files
+Chicago.cvs
+New_York_City.cvs
+washington.cvs
+
 
 ### Credits
-It's important to give proper credit. Add links to any repo that inspired you or blogposts you consulted.
-
+No credits at this time
