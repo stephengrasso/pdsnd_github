@@ -1,0 +1,261 @@
+import time
+import pandas as pd
+import numpy as np
+
+CITY_DATA = { 'chicago': 'chicago.csv',
+              'new york city': 'new_york_city.csv',
+              'washington': 'washington.csv' }
+
+# create months and days list to help with checking specific data
+MONTHS = ['january', 'february', 'march', 'april', 'may', 'june']
+
+DAYS = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
+
+
+
+def get_filters():
+    """
+    Asks user to specify a city, month, and day to analyze.
+
+    Returns:
+        (str) city - name of the city to analyze
+        (str) month - name of the month to filter by, or "all" to apply no month filter
+        (str) day - name of the day of week to filter by, or "all" to apply no day filter
+    """
+    print('Hello! Let\'s explore some US bikeshare data!')
+    # TO DO:get user input for city (chicago, new york city, washington). HINT:Use a while loop to handle invalid inputs
+
+    while True:
+        print("We have information on chicago, new york city, and washington.")
+        print("What city would you like more details on? ")
+        city = input()
+        # check if user entered valid city
+        if city == "chicago" or city == "new york city" or city == "washington":
+            break
+        else:
+            print("please enter the city spelled correctly and all lowercase.")
+
+    # TO DO: get user input for month (all, january, february, ... , june)
+    while True:
+        print("Choose which month you would like information on: ")
+        month = input()
+        # check if user entered valid month
+        if month in MONTHS:
+            break
+        # if they want all months
+        elif month == "all":
+            break
+        else:
+            print("please enter the month spelled correctly and all lowercase.")
+
+    # TO DO: get user input for day of week (all, monday, tuesday, ... sunday)
+    while True:
+        print("Choose which day you would like information on: ")
+        day = input()
+        # check if user entered valid day
+        if day in DAYS:
+            break
+        # if they want all days
+        elif day == "all":
+            break
+        else:
+            print("please enter the day spelled correctly and all lowercase.")
+    print('-'*40)
+    return city, month, day
+
+
+def load_data(city, month, day):
+    """
+    Loads data for the specified city and filters by month and day if applicable.
+
+    Args:
+        (str) city - name of the city to analyze
+        (str) month - name of the month to filter by, or "all" to apply no month filter
+        (str) day - name of the day of week to filter by, or "all" to apply no day filter
+    Returns:
+        df - Pandas DataFrame containing city data filtered by month and day
+    """
+    # grab the corresponding file to the city
+    city_file = CITY_DATA[city]
+
+    # load data file into a data frame
+    df = pd.read_csv(city_file)
+
+    # convert the Start Time column to datetime
+    df['Start Time'] = pd.to_datetime(df['Start Time'])
+
+    # grab month, day, and hour for the date
+    df['month'] = df['Start Time'].dt.month
+    df['day_of_week'] = df['Start Time'].dt.dayofweek
+    df['hour'] = df['Start Time'].dt.hour
+
+    # filter by month if possible
+    if month != 'all':
+        month = MONTHS.index(month) + 1
+        df = df[df['month'] == month]
+
+    # filter by day of week if possible
+    if day != 'all':
+        day = DAYS.index(day) + 1
+        df = df[df['day_of_week'] == day]
+
+    return df
+
+
+def time_stats(df):
+    """Displays statistics on the most frequent times of travel."""
+
+    print('\nCalculating The Most Frequent Times of Travel...\n')
+    start_time = time.time()
+
+    # TO DO: display the most common month
+    df = df.dropna(subset=['month'])
+    most_common_month = df['month'].value_counts().idxmax()
+    print("The most common month is :", most_common_month)
+
+    # TO DO: display the most common day of week
+    df = df.dropna(subset=['day_of_week'])
+    most_common_day_of_week = df['day_of_week'].value_counts().idxmax()
+    print("The most common day of week is :", most_common_day_of_week)
+
+    # TO DO: display the most common start hour
+    df = df.dropna(subset=['hour'])
+    most_common_start_hour = df['hour'].value_counts().idxmax()
+    print("The most common start hour is :", most_common_start_hour)
+
+    print("\nThis took %s seconds." % (time.time() - start_time))
+    print('-'*40)
+
+
+def station_stats(df):
+    """Displays statistics on the most popular stations and trip."""
+
+    print('\nCalculating The Most Popular Stations and Trip...\n')
+    start_time = time.time()
+
+    # TO DO: display most commonly used start station
+    start_station = df['Start Station'].value_counts().idxmax()
+    print("The most commonly used start station: ", start_station)
+
+    # TO DO: display most commonly used end station
+    end_station = df['End Station'].value_counts().idxmax()  # end station is defined here
+    print("The most commonly used end station: ", end_station)
+
+    # TO DO: display most frequent combination of start station and end station trip
+    start_end_station = df[['Start Station', 'End Station']].mode().loc[0]
+    print("The most commonly used start station and end station: {}, {}".format(start_end_station[0], start_end_station[1]))
+
+    print("\nThis took %s seconds." % (time.time() - start_time))
+    print('-'*40)
+
+
+def trip_duration_stats(df):
+    """Displays statistics on the total and average trip duration."""
+
+    print('\nCalculating Trip Duration...\n')
+    start_time = time.time()
+
+    # TO DO: display total travel time
+    total = df['Trip Duration'].sum()
+    print("Total travel time :", total)
+
+    # TO DO: display mean travel time
+    mean = df['Trip Duration'].mean()
+    print("Mean travel time :", mean)
+
+    print("\nThis took %s seconds." % (time.time() - start_time))
+    print('-'*40)
+
+
+def user_stats(df, city):
+    """Displays statistics on bikeshare users."""
+
+    print('\nCalculating User Stats...\n')
+    start_time = time.time()
+
+    # TO DO: Display counts of user types
+    print("Counts of user types:")
+    user = df['User Type'].value_counts()
+    # loop through user types
+    for index, user_count in enumerate(user):
+        print("  {}: {}".format(user.index[index], user_count))
+
+    print()
+
+    # TO DO: Display counts of gender
+    if city == "washington":
+        print("I'm sorry gender information is not available for Washington")
+    else:
+        print("Counts of gender:")
+        gender = df['Gender'].value_counts()
+        # loop through genders
+        for index, gender_count in enumerate(gender):
+            print("  {}: {}".format(gender.index[index], gender_count))
+
+    print()
+
+    # TO DO: Display earliest, most recent, and most common year of birth
+    if city == "washington":
+        print("I'm sorry birth year information is not available for Washington")
+    else:
+        birth_year = df['Birth Year']
+        # earliest
+        earliest = birth_year.min()
+        print("The most earliest birth year:", earliest)
+        # most recent
+        most_recent = birth_year.max()
+        print("The most recent birth year:", most_recent)
+        # most common year
+        most_common = birth_year.value_counts().idxmax()
+        print("The most common birth year:", most_common)
+
+    print("\nThis took %s seconds." % (time.time() - start_time))
+    print('-'*40)
+
+
+def raw_data(df):
+    # asks user if they want to display raw data
+    while True:
+        print("Would you like to display the raw data? (y/n) ")
+        answer = input()
+
+        if answer == 'y' or answer == 'n':
+            break
+        else:
+            print("Please enter either a lowercase y or n")
+    # if yes it will display the data, otherwise nothing will happen
+    if answer == 'y':
+        while True:
+            # display five lines of raw data
+            for i in range(5):
+                print(df.iloc[i])
+                print()
+            # asking if they want another five lines of the raw data
+            choice = input('Another five? y/n ')
+            if choice == 'y':
+                continue
+            elif choice == 'n':
+                break
+            else:
+                print('Please enter either a lowercase y or n')
+                return
+
+
+def main():
+    while True:
+        city, month, day = get_filters()
+        df = load_data(city, month, day)
+
+        time_stats(df)
+        station_stats(df)
+        trip_duration_stats(df)
+        user_stats(df, city)
+        raw_data(df)  # added in to display raw data
+
+        restart = input('\nWould you like to restart? Enter yes or no.\n')
+        if restart.lower() != 'yes':
+            break
+
+
+if __name__ == "__main__":
+    main()
